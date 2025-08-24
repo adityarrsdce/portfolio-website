@@ -1,0 +1,460 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Menu, X, ArrowUpRight, Instagram, Linkedin, Mail, Phone, MapPin, ExternalLink } from "lucide-react";
+
+// --- Quick Tweaks -----------------------------------------------------------
+// 1) Replace BRAND + SECTIONS with your info
+// 2) Update PROJECTS with your real work (images, links)
+// 3) You can delete any section you don't need
+
+const BRAND = {
+  name: "Aditya Raj",
+  role: "Product Designer / UI·UX",
+  tagline: "Designing delightful, effective digital experiences.",
+  location: "Patna, India",
+  email: "hello@aditya.design",
+  phone: "+91 90000 00000",
+  socials: {
+    behance: "https://www.behance.net/",
+    dribbble: "https://dribbble.com/",
+    instagram: "https://instagram.com/",
+    linkedin: "https://linkedin.com/",
+  },
+};
+
+const NAV = [
+  { id: "work", label: "Work" },
+  { id: "about", label: "About" },
+  { id: "services", label: "Services" },
+  { id: "contact", label: "Contact" },
+];
+
+const PROJECTS = [
+  {
+    title: "Fintech Wallet — Mobile App Redesign",
+    tags: ["UI/UX", "Mobile", "Fintech"],
+    cover:
+      "https://images.unsplash.com/photo-1556745753-b2904692b3cd?q=80&w=1600&auto=format&fit=crop",
+    year: "2025",
+    role: "End-to-End: Research → UI → Prototype",
+    blurb:
+      "Reduced onboarding drop-off by 27% via simplified flows and clearer microcopy.",
+    caseStudyUrl: "#",
+  },
+  {
+    title: "Travel Landing — Conversion Sprint",
+    tags: ["Web", "CRO", "Motion"],
+    cover:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
+    year: "2024",
+    role: "UI, Motion, Experimentation",
+    blurb:
+      "+38% sign‑ups using hero clarity + scroll‑triggered storytelling.",
+    caseStudyUrl: "#",
+  },
+  {
+    title: "EdTech Dashboard — Design System",
+    tags: ["Design System", "Dashboard", "Accessibility"],
+    cover:
+      "https://images.unsplash.com/photo-1557093793-0fd3a3c8e0e5?q=80&w=1600&auto=format&fit=crop",
+    year: "2025",
+    role: "Design System Lead",
+    blurb:
+      "WCAG‑compliant components, theming, and tokens across 12 apps.",
+    caseStudyUrl: "#",
+  },
+  {
+    title: "Food Delivery — Checkout Optimization",
+    tags: ["Research", "UX", "A/B"],
+    cover:
+      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1600&auto=format&fit=crop",
+    year: "2024",
+    role: "Research, Wireframe, Prototype",
+    blurb:
+      "Streamlined cart → payment led to 19% faster completion.",
+    caseStudyUrl: "#",
+  },
+  {
+    title: "Health App — Habit Builder",
+    tags: ["Mobile", "Wellness", "Gamification"],
+    cover:
+      "https://images.unsplash.com/photo-1570215170752-4a57ce24d995?q=80&w=1600&auto=format&fit=crop",
+    year: "2023",
+    role: "UI/UX, Prototyping",
+    blurb: "Level‑up streaks and rituals that stick.",
+    caseStudyUrl: "#",
+  },
+  {
+    title: "SaaS Billing — Pricing Revamp",
+    tags: ["B2B", "Web", "Strategy"],
+    cover:
+      "https://images.unsplash.com/photo-1483058712412-4245e9b90334?q=80&w=1600&auto=format&fit=crop",
+    year: "2023",
+    role: "Lead Designer",
+    blurb: "Transparent tiers, inline FAQ, outcome‑oriented copy.",
+    caseStudyUrl: "#",
+  },
+];
+
+const SERVICES = [
+  {
+    title: "Product Design",
+    points: [
+      "User research, journey maps, persona",
+      "Wireframes → high‑fidelity UI",
+      "Interactive prototypes (Figma)",
+    ],
+  },
+  {
+    title: "Design Systems",
+    points: [
+      "Tokens, components, and patterns",
+      "Accessibility & theming",
+      "Documentation & governance",
+    ],
+  },
+  {
+    title: "Growth & CRO",
+    points: [
+      "Landing pages that convert",
+      "A/B tests & analytics",
+      "Messaging & microcopy",
+    ],
+  },
+];
+
+// --- UI Bits ---------------------------------------------------------------
+const Container = ({ children, className = "" }) => (
+  <div className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>
+);
+
+const SectionTitle = ({ eyebrow, title, right }) => (
+  <div className="mb-8 flex items-end justify-between gap-6">
+    <div>
+      {eyebrow && (
+        <div className="text-xs uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
+          {eyebrow}
+        </div>
+      )}
+      <h2 className="mt-1 text-2xl font-semibold leading-tight sm:text-3xl">{title}</h2>
+    </div>
+    {right}
+  </div>
+);
+
+const Tag = ({ children }) => (
+  <span className="rounded-full border px-2.5 py-1 text-xs leading-none text-neutral-600 dark:text-neutral-300">
+    {children}
+  </span>
+);
+
+const Card = ({ children, className = "" }) => (
+  <div className={`rounded-2xl border bg-white/70 backdrop-blur-md shadow-sm dark:bg-neutral-900/70 ${className}`}>
+    {children}
+  </div>
+);
+
+// --- Main Component --------------------------------------------------------
+export default function PortfolioSite() {
+  const [open, setOpen] = React.useState(false);
+  const [active, setActive] = React.useState("work");
+
+  React.useEffect(() => {
+    const onScroll = () => {
+      const anchors = NAV.map(n => document.getElementById(n.id));
+      const mid = window.scrollY + window.innerHeight / 2;
+      for (const a of anchors) {
+        if (!a) continue;
+        const top = a.offsetTop - 120;
+        const bottom = top + a.offsetHeight;
+        if (mid >= top && mid <= bottom) {
+          setActive(a.id);
+          break;
+        }
+      }
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white text-neutral-900 dark:from-neutral-950 dark:to-neutral-900 dark:text-neutral-50">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-neutral-950/60">
+        <Container className="flex h-16 items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-xl bg-neutral-900 dark:bg-white" />
+            <div className="leading-tight">
+              <div className="text-sm font-semibold">{BRAND.name}</div>
+              <div className="text-xs text-neutral-500 dark:text-neutral-400">{BRAND.role}</div>
+            </div>
+          </div>
+
+          <nav className="hidden items-center gap-6 md:flex">
+            {NAV.map((n) => (
+              <button
+                key={n.id}
+                onClick={() => scrollTo(n.id)}
+                className={`text-sm transition ${
+                  active === n.id ? "text-neutral-900 dark:text-white" : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                }`}
+              >
+                {n.label}
+              </button>
+            ))}
+            <a
+              href={BRAND.socials.behance}
+              target="_blank"
+              rel="noreferrer"
+              className="group inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm"
+            >
+              <span>View on Behance</span>
+              <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          </nav>
+
+          <button className="md:hidden" onClick={() => setOpen((v) => !v)}>
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </Container>
+
+        {/* Mobile drawer */}
+        {open && (
+          <div className="border-t bg-white/80 backdrop-blur dark:bg-neutral-950/80 md:hidden">
+            <Container className="flex flex-col py-3">
+              {NAV.map((n) => (
+                <button
+                  key={n.id}
+                  onClick={() => scrollTo(n.id)}
+                  className={`flex items-center justify-between py-3 text-left text-base ${
+                    active === n.id ? "font-medium" : "text-neutral-600 dark:text-neutral-300"
+                  }`}
+                >
+                  {n.label} <ArrowUpRight className="h-4 w-4" />
+                </button>
+              ))}
+              <a href={BRAND.socials.behance} target="_blank" rel="noreferrer" className="flex items-center gap-2 py-3 text-base">
+                <ExternalLink className="h-4 w-4" /> Behance
+              </a>
+            </Container>
+          </div>
+        )}
+      </header>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden pb-4 pt-14 sm:pt-20">
+        <Container>
+          <div className="grid items-center gap-10 md:grid-cols-2">
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-3xl font-semibold leading-tight sm:text-5xl"
+              >
+                {BRAND.name}
+              </motion.h1>
+              <p className="mt-3 text-lg text-neutral-600 dark:text-neutral-300">{BRAND.tagline}</p>
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                <Tag>{BRAND.role}</Tag>
+                <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" /> {BRAND.location}</span>
+                <a href={`mailto:${BRAND.email}`} className="inline-flex items-center gap-1 hover:underline"><Mail className="h-4 w-4" /> {BRAND.email}</a>
+                <a href={`tel:${BRAND.phone}`} className="inline-flex items-center gap-1 hover:underline"><Phone className="h-4 w-4" /> {BRAND.phone}</a>
+              </div>
+
+              <div className="mt-6 flex items-center gap-3">
+                <a href="#work" className="rounded-full bg-neutral-900 px-5 py-2 text-white dark:bg-white dark:text-neutral-900">See Work</a>
+                <a href="#contact" className="rounded-full border px-5 py-2">Contact</a>
+              </div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="relative"
+            >
+              <div className="aspect-[4/3] w-full overflow-hidden rounded-3xl border shadow-lg">
+                <img
+                  alt="cover"
+                  className="h-full w-full object-cover"
+                  src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop"
+                />
+              </div>
+              <div className="pointer-events-none absolute inset-0 -z-10 scale-110 bg-[radial-gradient(60%_40%_at_50%_0%,rgba(0,0,0,0.08),transparent)] dark:bg-[radial-gradient(60%_40%_at_50%_0%,rgba(255,255,255,0.08),transparent)]" />
+            </motion.div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Work Grid */}
+      <section id="work" className="scroll-mt-24 py-10 sm:py-16">
+        <Container>
+          <SectionTitle eyebrow="Selected" title="Work">
+            <div />
+          </SectionTitle>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {PROJECTS.map((p, i) => (
+              <motion.a
+                key={p.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-20%" }}
+                transition={{ duration: 0.5, delay: 0.02 * i }}
+                href={p.caseStudyUrl}
+                className="group"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Card className="overflow-hidden">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
+                    <img src={p.cover} alt={p.title} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent opacity-0 transition group-hover:opacity-100" />
+                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-end justify-between p-4 opacity-0 transition group-hover:opacity-100">
+                      <div className="text-white">
+                        <div className="text-xs uppercase tracking-widest opacity-80">{p.year}</div>
+                        <div className="text-lg font-semibold leading-tight">{p.title}</div>
+                        <div className="text-xs opacity-80">{p.role}</div>
+                      </div>
+                      <div className="grid gap-1 text-right">
+                        <div className="inline-flex items-center justify-end gap-1 text-white text-sm"><span>Case study</span> <ArrowUpRight className="h-4 w-4" /></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 p-4">
+                    <div className="flex flex-wrap gap-2">
+                      {p.tags.map((t) => (
+                        <Tag key={t}>{t}</Tag>
+                      ))}
+                    </div>
+                    <div className="text-sm text-neutral-500 dark:text-neutral-400">{p.blurb}</div>
+                  </div>
+                </Card>
+              </motion.a>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* About */}
+      <section id="about" className="scroll-mt-24 border-t py-12 sm:py-16">
+        <Container>
+          <SectionTitle eyebrow="Profile" title="About">
+            <div />
+          </SectionTitle>
+          <div className="grid items-start gap-8 md:grid-cols-5">
+            <div className="md:col-span-3">
+              <Card className="p-6">
+                <p className="text-neutral-700 dark:text-neutral-300">
+                  I’m a product designer focused on crafting simple, outcome‑driven interfaces. I work end‑to‑end — from research & flows to high‑fidelity UI and motion. I enjoy pairing with PMs and engineers, and I care deeply about clarity, accessibility, and speed.
+                </p>
+                <ul className="mt-4 grid gap-2 text-sm text-neutral-600 dark:text-neutral-400 sm:grid-cols-2">
+                  <li>• 6+ years in SaaS, fintech, and edtech</li>
+                  <li>• Tools: Figma, Framer, Blender, Lottie</li>
+                  <li>• Strengths: systems thinking, prototyping</li>
+                  <li>• Bonus: writes clean, dev‑friendly specs</li>
+                </ul>
+              </Card>
+            </div>
+            <div className="md:col-span-2">
+              <Card className="p-6">
+                <div className="text-sm font-medium">Highlights</div>
+                <ul className="mt-3 grid gap-3 text-sm text-neutral-600 dark:text-neutral-400">
+                  <li>✅ Drove +38% signup lift for travel client</li>
+                  <li>✅ Built DS used by 5+ product squads</li>
+                  <li>✅ Reduced checkout time by 19%</li>
+                  <li>✅ Led 0→1 for wellness habit app</li>
+                </ul>
+                <div className="mt-6 text-sm font-medium">Clients</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {"Google, Swiggy, Razorpay, Unacademy".split(", ").map((c) => (
+                    <Tag key={c}>{c}</Tag>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Services */}
+      <section id="services" className="scroll-mt-24 py-12 sm:py-16">
+        <Container>
+          <SectionTitle eyebrow="What I do" title="Services" />
+          <div className="grid gap-6 md:grid-cols-3">
+            {SERVICES.map((s) => (
+              <Card key={s.title} className="p-6">
+                <div className="text-lg font-semibold">{s.title}</div>
+                <ul className="mt-4 grid gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                  {s.points.map((p) => (
+                    <li key={p}>• {p}</li>
+                  ))}
+                </ul>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="scroll-mt-24 border-t py-12 sm:py-16">
+        <Container>
+          <SectionTitle eyebrow="Say hello" title="Contact" />
+          <div className="grid gap-6 md:grid-cols-5">
+            <div className="md:col-span-3">
+              <Card className="p-6">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    alert("Thanks! I’ll get back to you soon.");
+                  }}
+                  className="grid gap-4"
+                >
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <input className="rounded-xl border px-3 py-2" placeholder="Your name" required />
+                    <input className="rounded-xl border px-3 py-2" placeholder="Email" type="email" required />
+                  </div>
+                  <input className="rounded-xl border px-3 py-2" placeholder="Subject" />
+                  <textarea className="min-h-[120px] rounded-xl border px-3 py-2" placeholder="Message" />
+                  <button type="submit" className="inline-flex w-fit items-center gap-2 rounded-full bg-neutral-900 px-5 py-2 text-white dark:bg-white dark:text-neutral-900">
+                    Send <ArrowUpRight className="h-4 w-4" />
+                  </button>
+                </form>
+              </Card>
+            </div>
+            <div className="md:col-span-2">
+              <Card className="p-6">
+                <div className="text-sm font-medium">Connect</div>
+                <div className="mt-3 grid gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                  <a className="inline-flex items-center gap-2 hover:underline" href={`mailto:${BRAND.email}`}><Mail className="h-4 w-4" /> {BRAND.email}</a>
+                  <a className="inline-flex items-center gap-2 hover:underline" href={`tel:${BRAND.phone}`}><Phone className="h-4 w-4" /> {BRAND.phone}</a>
+                  <div className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" /> {BRAND.location}</div>
+                </div>
+                <div className="mt-4 flex items-center gap-3 text-sm">
+                  <a className="inline-flex items-center gap-2 rounded-full border px-3 py-1" href={BRAND.socials.instagram} target="_blank" rel="noreferrer"><Instagram className="h-4 w-4" /> Instagram</a>
+                  <a className="inline-flex items-center gap-2 rounded-full border px-3 py-1" href={BRAND.socials.linkedin} target="_blank" rel="noreferrer"><Linkedin className="h-4 w-4" /> LinkedIn</a>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t py-8">
+        <Container className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="text-sm text-neutral-500 dark:text-neutral-400">© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</div>
+          <div className="text-xs text-neutral-500 dark:text-neutral-400">
+            Built with React + Tailwind · Inspired by Behance project layouts
+          </div>
+        </Container>
+      </footer>
+    </div>
+  );
+}
